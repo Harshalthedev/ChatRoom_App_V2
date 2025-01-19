@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta name="_csrf" th:content="${_csrf.token}" />
+	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <title>Dashboard</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Container Styling */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styling */
+        header {
+            background: linear-gradient(135deg, #4a90e2, #0062cc);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+            font-size: 24px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .username-display {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .logout-button {
+            background-color: #ff4b5c;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .logout-button:hover {
+            background-color: #d43c49;
+        }
+
+        /* Dashboard Content Styling */
+        .dashboard-content {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Tab Navigation Styling */
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 15px 30px;
+            cursor: pointer;
+            color: #4a90e2;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: color 0.3s;
+            border-radius: 5px;
+        }
+
+        .tab:hover {
+            color: #0056b3;
+        }
+
+        .tab.active {
+            color: #ffffff;
+            background-color: #4a90e2;
+            border-radius: 20px;
+        }
+
+        /* Tab Content Styling */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            padding: 15px;
+        }
+
+        /* Form Styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            color: #4a4a4a;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #4a90e2;
+            outline: none;
+        }
+
+        button {
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background-color: #4a90e2;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Manage Existing Room Styling */
+        .room-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .room-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .room-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .room-actions button {
+            background-color: #4CAF50;
+        }
+
+        .room-actions .delete {
+            background-color: #f44336;
+        }
+		
+		.room-actions .update {
+            background-color: rgb(64, 0, 64);
+        }
+		
+		.room-actions .view-code {
+		    background-color: rgb(255, 128, 0);
+		}
+		
+		.common-button{
+			transition: background-color 0.3s;
+		}
+		
+		.common-button:hover {
+		  background-color: #0056b3;
+		}
+		
+		/* Profile Management Form Styling */
+		#profile {
+		    padding: 15px;
+		    background-color: #ffffff;
+		    border-radius: 10px;
+		    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		    
+		}
+		
+		/* Style for form rows  */
+		.form-row {
+		    display: flex;
+		    justify-content: space-between;
+		    margin-bottom: 5px;
+		}
+		
+		/* Ensure each input field takes up equal space */
+		.form-row label {
+		    flex: 1;
+		    margin-right: 10px;
+		    font-size: 16px;
+		}
+		
+		.form-row input {
+		    flex: 2;
+		    padding: 10px;
+		    border: 1px solid #ddd;
+		    border-radius: 5px;
+		    font-size: 16px;
+		}
+		
+		/* Styles for the button */
+		button {
+		    padding: 12px;
+		    font-size: 16px;
+		    font-weight: bold;
+		    color: white;
+		    background-color: #4a90e2;
+		    border: none;
+		    border-radius: 5px;
+		    cursor: pointer;
+		    transition: background-color 0.3s;
+		}
+		
+		button:hover {
+		    background-color: #0056b3;
+		}
+		
+		/* Adjustments for smaller screens */
+		@media (max-width: 768px) {
+		    .form-row {
+		        flex-direction: column; 
+		    }
+		
+		    .form-row label, 
+		    .form-row input {
+		        width: 100%;
+		        margin-right: 0;
+		    }
+		}
+
+
+		/* Footer Styling */
+        footer {
+            width: 100%;
+            text-align: center;
+            background-color: #f8f9fa;
+            padding: 15px 0;
+            font-size: 14px;
+            color: #4a4a4a;
+            border-top: 1px solid #e4e4e4;
+            margin-top: auto;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        footer span {
+            font-weight: bold;
+            color: #4a90e2;
+        }
+
+        /* Responsive Styling */
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            .tab {
+                width: 100%;
+                text-align: center;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="username-display">Welcome, <span th:text="${displayUserName}"></span></div>
+		<form action="/logout" method="post" style="display: inline;">
+		    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+		    <button type="submit" class="logout-button">Logout</button>
+		</form>
+    </header>
+
+    <div class="container">
+        <div class="dashboard-content">
+            <!-- Tabs for different sections -->
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('create-room')">Create New Room</div>
+                <div class="tab" onclick="showTab('join-room')">Join New Room</div>
+                <div class="tab" onclick="showTab('manage-room')">Manage Existing Room</div>
+                <div class="tab" onclick="showTab('profile')">Profile Management</div>
+            </div>
+
+            <!-- Create New Room Content -->
+            <div id="create-room" class="tab-content active">
+                <h2>Create New Room</h2>
+                <form th:action="@{/rooms/create}" method="post">
+                    <label for="roomName">Room Name:</label>
+                    <input type="text" id="roomName" name="roomName" placeholder="Enter room name" required />
+                    <button type="submit">Create Room</button>
+                </form>
+            </div>
+
+            <!-- Join New Room Content -->
+            <div id="join-room" class="tab-content">
+                <h2>Join New Room</h2>
+                <form th:action="@{/rooms/join}" method="post">
+                    <label for="roomCode">Room Code:</label>
+                    <input type="text" id="roomCode" name="roomCode" placeholder="Enter room code to join" required />
+                    <button type="submit">Join New Room</button>
+                </form>
+            </div>
+
+			<!-- Manage Existing Room Content -->
+			<div id="manage-room" class="tab-content">
+			    <h2>Manage Existing Room</h2>
+			    <ul id="room-list" class="room-list">
+			        
+			    </ul>
+			</div>
+
+			<div id="profile" class="tab-content">
+			    <h2>Profile Management</h2>
+			    <form th:action="@{/profile}" method="post">
+			        <div class="form-row">
+			            <label for="displayName">Display Name:</label>
+			            <input type="text" id="displayName" name="displayName" placeholder="Update your display name" required />
+			        </div>
+			        <div class="form-row">
+			            <label for="oldPassword">Old Password:</label>
+			            <input type="password" id="oldPassword" name="oldPassword" placeholder="Enter your old password" required />
+			        </div>
+			        <div class="form-row">
+			            <label for="password">New Password:</label>
+			            <input type="password" id="password" name="password" placeholder="Update your password" required />
+			        </div>
+			        <div class="form-row">
+			            <label for="confirmPassword">Confirm New Password:</label>
+			            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your new password" required />
+			        </div>
+			        <div class="form-row">
+			            <label for="securityQuestion1"><strong>Security Question 1:</strong> What is your favorite book?</label>
+			            <input type="text" id="securityQuestion1" name="securityQuestion1" placeholder="Update your first answer" required />
+			        </div>
+			        <div class="form-row">
+			            <label for="securityQuestion2"><strong>Security Question 2:</strong> What is your favorite movie?</label>
+			            <input type="text" id="securityQuestion2" name="securityQuestion2" placeholder="Update your second answer" required />
+			        </div>
+			        <button type="submit">Update Profile</button>
+			    </form>
+			</div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; <span id="current_year"></span> Real-Time Chat Application</p>
+    </footer>
+
+	<script>
+	    let current_date = new Date();
+	    let current_year = current_date.getFullYear();
+	    document.getElementById('current_year').innerHTML = current_year;
+	
+	    // Function to show the appropriate tab
+	    function showTab(tabId) {
+	        document.querySelectorAll('.tab, .tab-content').forEach((el) =>
+	            el.classList.remove('active')
+	        );
+
+	        document
+	            .querySelector(`.tab[onclick="showTab('${tabId}')"]`)
+	            .classList.add('active');
+	        document.getElementById(tabId).classList.add('active');
+	
+	        if (tabId === 'manage-room') {
+	            fetchRoomList();
+	        }
+	    }
+	
+	    // Fetch the CSRF token from meta tags
+	    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	
+	    // Function to fetch the room list
+	    async function fetchRoomList() {
+	        try {
+	            const response = await fetch('/rooms/manage');
+	            console.log('Response:', response);
+	            if (!response.ok) {
+	                console.error('Failed to fetch rooms:', response.status, response.statusText);
+	                throw new Error('Failed to fetch rooms');
+	            }
+	            const rooms = await response.json();
+	            console.log('Fetched rooms:', rooms);
+	
+	            const roomList = document.getElementById('room-list');
+	            roomList.innerHTML = '';
+	
+	            rooms.forEach((room) => {
+	                const roomItem = document.createElement('li');
+	                roomItem.className = 'room-item';
+	
+	                roomItem.innerHTML = `
+	                    <span>${room.roomName}</span>
+						
+	                    <div class="room-actions">
+	                        <button onclick="showRoomPage('${room.roomId}')">Join Room</button>
+	                        <button class="view-code common-button" onclick="alert('Room Code: ${room.roomId}')">View Room Code</button>
+	                        <button class="update common-button" onclick="showUpdateRoomPopup('${room.roomId}')">Update Room Name</button>
+	                        <button class="delete common-button" onclick="showDeleteRoomPopup('${room.roomId}')">Delete Room</button>
+	                    </div>
+	                `;
+	
+	                roomList.appendChild(roomItem);
+	            });
+	        } catch (error) {
+	            console.error('Error fetching rooms:', error);
+	            alert('Could not load rooms. Please try again later.');
+	        }
+	    }
+	
+	    // Function to show a popup to update the room name
+	    function showUpdateRoomPopup(roomId) {
+	        const newRoomName = prompt('Enter the new room name:');
+	        if (newRoomName && newRoomName.trim() !== '') {
+	            const form = document.createElement('form');
+	            form.method = 'post';
+	            form.action = `/rooms/update/${roomId}`;
+	
+	            const input = document.createElement('input');
+	            input.type = 'hidden';
+	            input.name = 'newName';
+	            input.value = newRoomName.trim();
+	            form.appendChild(input);
+	
+	            // Add CSRF token to the form
+	            const csrfInput = document.createElement('input');
+	            csrfInput.type = 'hidden';
+	            csrfInput.name = '_csrf';
+	            csrfInput.value = csrfToken;
+	            form.appendChild(csrfInput);
+	
+	            document.body.appendChild(form);
+	            form.submit();
+	        } else {
+	            alert('Room name cannot be empty.');
+	        }
+	    }
+		
+		// Function to show a popup to delete the room details
+	    function showDeleteRoomPopup(roomId) {
+	        const deleteRoom = prompt('Are you sure ? Yes/No:');
+	        if (deleteRoom && deleteRoom.trim() !== '') {
+	            const form = document.createElement('form');
+	            form.method = 'post';
+	            form.action = `/rooms/delete/${roomId}`;
+	
+	            const input = document.createElement('input');
+	            input.type = 'hidden';
+	            input.name = 'userChoice';
+	            input.value = deleteRoom.trim();
+	            form.appendChild(input);
+	
+	            // Add CSRF token to the form
+	            const csrfInput = document.createElement('input');
+	            csrfInput.type = 'hidden';
+	            csrfInput.name = '_csrf';
+	            csrfInput.value = csrfToken;
+	            form.appendChild(csrfInput);
+	
+	            document.body.appendChild(form);
+	            form.submit();
+	        } else {
+	            alert('Room will not delete as you cancelled it');
+	        }
+	    }
+		
+		// Function to show a popup to delete the room details
+	   function showRoomPage(roomId) {
+           const form = document.createElement('form');
+           form.method = 'post';
+           form.action = `/rooms/chat-page/${roomId}`;
+		   
+		   // Add CSRF token to the form
+	        const csrfInput = document.createElement('input');
+	        csrfInput.type = 'hidden';
+	        csrfInput.name = '_csrf';
+	        csrfInput.value = csrfToken;
+	        form.appendChild(csrfInput);
+		   
+           document.body.appendChild(form);
+           form.submit()
+	   }
+	</script>
+
+
+</body>
+</html>

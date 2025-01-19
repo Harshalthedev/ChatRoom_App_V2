@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error</title>
+</head>
+<body>
+    <h2 th:text="${errorTitle != null ? errorTitle : 'Room not found!'}">Room not found!</h2>
+    <p th:text="${errorMessage != null ? errorMessage : 'The room you are trying to join does not exist.'}">
+        The room you are trying to join does not exist.
+    </p>
+    <a th:href="@{/rooms/create}">Create a new room</a>
+</body>
+</html>

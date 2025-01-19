@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="'Room: ' + ${room.roomName}">Room Name</title>
+	
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* Container Styling */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 180px);
+        }
+
+        /* Header Styling */
+        header {
+            background: linear-gradient(135deg, #4a90e2, #0062cc);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+            font-size: 24px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .username-display {
+            font-size: 18px;
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .username-display em {
+            font-style: italic;
+            font-size: 14px;
+        }
+
+        .logout-button {
+            background-color: #ff4b5c;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logout-button:hover {
+            background-color: #d43c49;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Chatbox Section */
+        .chatbox {
+            flex: 1;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #4a90e2, #0062cc);
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 10px;
+            height: 100%;
+            overflow-y: auto;
+            background: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 10px;
+            max-width: 75%;
+            line-height: 1.4;
+            word-wrap: break-word;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .message.sent {
+            background: #e1f5fe;
+            margin-left: auto;
+        }
+
+        .message.received {
+            background: #fff;
+            border: 1px solid #ddd;
+            margin-right: auto;
+        }
+		
+		.msgSentByuser {
+		    font-weight: bold;
+		    color: #007bff;
+		    margin-bottom: 2px;
+		}
+		
+		.messageContent {
+		    margin: 5px 0;
+		    color: #333;
+		}
+		
+        .message .timestamp {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+            display: block;
+            text-align: right;
+        }
+
+        .chat-input {
+            border-top: 1px solid #ddd;
+            padding: 10px;
+            background: #f1f1f1;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .chat-input button {
+            background: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .chat-input button:hover {
+            background: #0062cc;
+        }
+		
+		/* Actions Section */
+        .actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .actions button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .actions button:hover {
+            background-color: #0062cc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Footer Styling */
+        footer {
+            width: 100%;
+            text-align: center;
+            background-color: #f8f9fa;
+            padding: 15px 0;
+            font-size: 14px;
+            color: #4a4a4a;
+            border-top: 1px solid #e4e4e4;
+            margin-top: auto;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        footer span {
+            font-weight: bold;
+            color: #4a90e2;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="username-display">
+            Connectly <br>
+            <em>Stay Connected, Anytime, Anywhere.</em>
+        </div>
+        <form action="/logout" method="post" style="display: inline;">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+    </header>
+
+    <div class="container">
+        <header>
+            <h4><span th:text="${room.roomName}">Room Name</span></h4>
+			<input type="hidden" id="roomId" th:value="${room.roomId}" />
+			<input type="hidden" id="currentLoggedUser" th:value="${currentLoggedUser}" />
+			
+        </header>
+
+        <section class="chatbox">
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="Type your message..." required />
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </section>
+
+        <section class="actions">
+            <form th:action="@{/dashboard}" method="get">
+                <button type="submit">Back to DashBoard</button>
+            </form>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; <span id="current_year"></span> Real-Time Chat Application</p>
+    </footer>
+    
+	<!-- Add SockJS and Stomp.js -->
+	<script src="/webjars/jquery/jquery.min.js"></script>
+	<script src="/webjars/sockjs-client/sockjs.min.js"></script>
+	<script src="/webjars/stomp-websocket/stomp.min.js"></script>
+	
+    <script>
+        let current_date = new Date();
+        let current_year = current_date.getFullYear();
+        document.getElementById('current_year').innerHTML = current_year;
+	
+		var roomId = document.getElementById('roomId').value;
+		var currentLoggedUser = document.getElementById('currentLoggedUser').value;
+		
+		// Connect to the WebSocket server
+		var stompClient=null
+		let socket=new SockJS("/rooms/chat-room-app")
+		
+        stompClient=Stomp.over(socket)
+		stompClient.connect({}, function (frame) {
+	        //console.log('Connected: ' + frame);
+	    
+	        // Subscribe to the messages topic
+			stompClient.subscribe(`/topic/return-to/${roomId}`,function(response){
+				let receivedContent = JSON.parse(response.body).content;
+				let msgSentByuser = JSON.parse(response.body).currentLoggedUser;
+				
+				if(msgSentByuser === currentLoggedUser){
+					displayMessage(receivedContent,'sent', msgSentByuser)
+				}else{
+					displayMessage(receivedContent,'received', msgSentByuser)
+				}
+				
+			})
+	    });
+		
+		// Function to send a message to the server
+        function sendMessage() {
+			var message = document.getElementById('messageInput').value.trim();
+
+			let jsonOb={
+			    content:$("#messageInput").val(),
+				roomId: roomId,
+				currentLoggedUser: currentLoggedUser
+			}		
+			stompClient.send("/rooms/chat-room",{},JSON.stringify(jsonOb));
+			document.getElementById('messageInput').value = '';
+
+        }
+		
+		// Add keydown event listener for Enter key
+		document.getElementById('messageInput').addEventListener('keydown', function (event) {
+		    if (event.key === "Enter") {
+		        event.preventDefault();
+		        sendMessage();
+		    }
+		});
+		
+		// Display message in the chat
+		function displayMessage(message, type, sender) {
+		    var messageElement = document.createElement('div');
+		    messageElement.classList.add('message', type);
+		
+		    var senderElement = document.createElement('div');
+		    senderElement.classList.add('msgSentByuser');
+		    senderElement.innerText = sender;
+		
+		    var messageContentElement = document.createElement('div');
+		    messageContentElement.classList.add('messageContent');
+		    messageContentElement.innerText = message;
+		
+		    var timestampElement = document.createElement('div');
+		    timestampElement.classList.add('timestamp');
+		    timestampElement.innerText = new Date().toLocaleTimeString();
+		
+		    messageElement.appendChild(senderElement);
+		    messageElement.appendChild(messageContentElement);
+		    messageElement.appendChild(timestampElement);
+		
+		    document.getElementById('chatMessages').appendChild(messageElement);
+		    scrollToBottom();
+		}
+
+        // Scroll the chat to the bottom
+        function scrollToBottom() {
+            var chatMessages = document.getElementById('chatMessages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+    </script>
+</body>
+</html>

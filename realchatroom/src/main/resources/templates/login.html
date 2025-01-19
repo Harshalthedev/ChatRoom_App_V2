@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .signup-link a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <!-- Display login errors if they exist -->
+        <div th:if="${param.error}" class="error">
+            Invalid email or password. Please try again.
+        </div>
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="username">Email:</label>
+                <input type="email" id="username" name="username" required placeholder="Enter your email" />
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required placeholder="Enter your password" />
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+        <div class="signup-link">
+            <p>Don’t have an account? <a th:href="@{/signup}">Sign up here</a>.</p>
+			<p><a th:href="@{/reset-password}">Forgot your password?</a></p> <!-- Password reset link -->
+        </div>
+    </div>
+</body>
+</html>
+

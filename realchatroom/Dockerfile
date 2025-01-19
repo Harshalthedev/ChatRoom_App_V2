@@ -3,6 +3,6 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 FROM openjdk:17.0.1-jdk-slim
-COPY --from=build /target/chatroomapp-0.0.1-SNAPSHOT.jar chatroomapp.jar
+COPY --from=build /target/realchatroom-0.0.1-SNAPSHOT.jar realchatroom.jar
 EXPOSE 8080
-ENTRYPOINT [ "java", "-jar", "chatroomapp.jar" ]
+ENTRYPOINT [ "java", "-jar", "realchatroom.jar" ]

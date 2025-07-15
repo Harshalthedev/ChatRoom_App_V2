@@ -4,8 +4,8 @@
     <title>Login</title>
     <style>
 		body {
-		    font-family: Arial, sans-serif;
-		    background-color: #000;
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: linear-gradient(135deg, #141e30, #243b55);
 		    margin: 0;
 		    padding: 0;
 		    display: flex;
@@ -16,9 +16,9 @@
 		}
 		
 		.login-container {
-		    background: #1a1a1a;
+			background: rgba(255, 255, 255, 0.03);
 		    border-radius: 10px;
-		    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+			box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
 		    padding: 30px;
 		    width: 100%;
 		    max-width: 400px;
@@ -142,7 +142,7 @@
         <div th:if="${param.error}" class="error">
             Invalid email or password. Please try again.
         </div>
-        <form th:action="@{/login}" method="post">
+		<form th:action="@{/login}" method="post" onsubmit="return validateForm(event)">
             <div class="form-group">
                 <label for="username">Email:</label>
                 <input type="email" id="username" name="username" required placeholder="Enter your email" />
@@ -158,6 +158,18 @@
 			<p><a th:href="@{/reset-password}">Forgot your password?</a></p> <!-- Password reset link -->
         </div>
     </div>
+	<script>
+	    function validateForm(event) {
+	        const password = document.getElementById("password").value;
+	
+	        if (password.length < 8) {
+	            alert("Password must be at least 8 characters long.");
+	            event.preventDefault(); // Stop form submission
+	            return false;
+	        }
+	        return true;
+	    }
+	</script>
 </body>
 </html>
 

@@ -74,7 +74,7 @@ public class User {
     public void setSecurityQuestion1(String securityQuestion1) {
         this.securityQuestion1 = securityQuestion1;
     }
-
+    
     public String getSecurityQuestion2() {
         return securityQuestion2;
     }
